@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h2>Infinite Scroll Unsplash Code Challenge</h2>
-    <div class="conatiner">
+    <div class="container">
       <ImagePack
         v-for="(images, i) in dataToRender"
         :images="images"
@@ -13,6 +13,7 @@
 
 <script>
 import axios from "axios";
+import _ from "lodash";
 
 import ImagePack from "./ImagePack";
 import { setTimeout } from "timers";
@@ -31,32 +32,40 @@ export default {
   data() {
     return {
       images: null,
-      dataToRender: []
+      dataToRender: [],
+      isOk: null
     };
   },
-  created() {
-    this.getImages();
-    setTimeout(this.getImages(), 1000);
-    this.getImages();
-    window.addEventListener("scroll", this.scorl);
-  },
   destroyed: function() {
-    window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("scroll", this.scrol);
   },
   mounted() {
-    console.log(window);
+    this.getImages();
+    setTimeout(() => {
+      this.getImages();
+    }, 500);
+    window.addEventListener("scroll", _.debounce(this.scrol, 300));
   },
   methods: {
-    scorl() {
-      console.log("Przewijam", window.scrollY);
-      console.log("Offset", window.innerHeight);
-      const half = window.innerHeight / 2;
-      if (half - window.scrollY < 10) {
+    scrol() {
+      const windowInnerHeight = window.innerHeight;
+      const documentHeight = window.document.documentElement.offsetHeight;
+      const fullScroll = documentHeight - windowInnerHeight;
+
+      if (fullScroll - window.scrollY < 100) {
         console.log("dodaje");
         this.getImages();
       }
     },
     getImages() {
+      if (!this.isOk) {
+        console.log("Laduje");
+        this.isOk = true;
+        setTimeout(() => {
+          this.isOk = null;
+        }, 499);
+      }
+
       axios.get(apiEndPoint).then(res => {
         //console.log(res.data);
         const imagesPack = res.data.map(image => ({
@@ -76,10 +85,11 @@ export default {
 h2 {
   margin: 20px 0 0;
 }
-.conatiner {
+.container {
   display: flex;
   flex-wrap: wrap;
   max-width: 912px;
   margin: 10px auto;
+  height: 2000px;
 }
 </style>
