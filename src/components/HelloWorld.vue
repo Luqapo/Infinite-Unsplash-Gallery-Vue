@@ -1,10 +1,12 @@
 <template>
   <div class="hello">
     <h2>Infinite Scroll Unsplash Code Challenge</h2>
-    <div v-if="images" class="conatiner">
-      <div class="image" v-for="(image, i) in images" :key="i">
-        <img :src="image.urls.small" :alt="image.description" />
-      </div>
+    <div class="conatiner">
+      <ImagePack
+        v-for="(images, i) in dataToRender"
+        :images="images"
+        :key="i"
+      />
     </div>
   </div>
 </template>
@@ -12,28 +14,59 @@
 <script>
 import axios from "axios";
 
+import ImagePack from "./ImagePack";
+import { setTimeout } from "timers";
+
 const apiUrl = "https://api.unsplash.com";
-const count = 5;
+const count = 3;
 const accessKey =
   "9a3bbae53c612d4f49421b74e3206dc26f80d04b2dc0bf7004bce0e3f1971543";
 const apiEndPoint = `${apiUrl}/photos/random?client_id=${accessKey}&count=${count}`;
 
 export default {
   name: "HelloWorld",
+  components: {
+    ImagePack
+  },
   data() {
     return {
-      images: null
+      images: null,
+      dataToRender: []
     };
   },
   created() {
-    axios.get(apiEndPoint).then(res => {
-      //console.log(res.data);
-      this.images = res.data.map(image => ({
-        description: image.description,
-        urls: image.urls
-      }));
-      console.log(this.images);
-    });
+    this.getImages();
+    setTimeout(this.getImages(), 1000);
+    this.getImages();
+    window.addEventListener("scroll", this.scorl);
+  },
+  destroyed: function() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  mounted() {
+    console.log(window);
+  },
+  methods: {
+    scorl() {
+      console.log("Przewijam", window.scrollY);
+      console.log("Offset", window.innerHeight);
+      const half = window.innerHeight / 2;
+      if (half - window.scrollY < 10) {
+        console.log("dodaje");
+        this.getImages();
+      }
+    },
+    getImages() {
+      axios.get(apiEndPoint).then(res => {
+        //console.log(res.data);
+        const imagesPack = res.data.map(image => ({
+          description: image.description,
+          urls: image.urls
+        }));
+        this.dataToRender.push(imagesPack);
+        console.log(this.dataToRender);
+      });
+    }
   }
 };
 </script>
@@ -46,17 +79,7 @@ h2 {
 .conatiner {
   display: flex;
   flex-wrap: wrap;
-  max-width: 1124px;
+  max-width: 912px;
   margin: 10px auto;
-}
-.image {
-  max-width: 300px;
-  align-self: auto;
-  margin: 1% 2px;
-  flex-grow: 1;
-  vertical-align: middle;
-  img {
-    width: 100%;
-  }
 }
 </style>
