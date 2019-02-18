@@ -16,10 +16,10 @@ import axios from "axios";
 import _ from "lodash";
 
 import ImagePack from "./ImagePack";
-import { setTimeout } from "timers";
+import { setTimeout, setInterval } from "timers";
 
 const apiUrl = "https://api.unsplash.com";
-const count = 3;
+const count = 6;
 const accessKey =
   "9a3bbae53c612d4f49421b74e3206dc26f80d04b2dc0bf7004bce0e3f1971543";
 const apiEndPoint = `${apiUrl}/photos/random?client_id=${accessKey}&count=${count}`;
@@ -45,17 +45,27 @@ export default {
       this.getImages();
     }, 500);
     window.addEventListener("scroll", _.debounce(this.scrol, 300));
+    this.winHeight();
   },
   methods: {
     scrol() {
-      const windowInnerHeight = window.innerHeight;
-      const documentHeight = window.document.documentElement.offsetHeight;
-      const fullScroll = documentHeight - windowInnerHeight;
-
-      if (fullScroll - window.scrollY < 100) {
+      console.log(this.fullScroll - this.scrollY < 100);
+      if (this.fullScroll - this.scrollY < 100) {
         console.log("dodaje");
         this.getImages();
       }
+    },
+    winHeight() {
+      setInterval(() => {
+        this.windowInnerHeight = window.innerHeight;
+        // console.log('wysokosc', this.windowInnerHeight);
+        this.documentHeight = window.document.documentElement.offsetHeight;
+        console.log("wysokosc dokumentu", this.documentHeight);
+        this.fullScroll = this.documentHeight - this.windowInnerHeight;
+        //console.log('fullscroll', this.fullScroll);
+        this.scrollY = window.scrollY;
+        //console.log('scrollY', this.scrollY);
+      }, 300);
     },
     getImages() {
       if (!this.isOk) {
@@ -73,10 +83,14 @@ export default {
           urls: image.urls
         }));
         this.dataToRender.push(imagesPack);
-        console.log(this.dataToRender);
       });
     }
   }
+  // computed: {
+  //     scrollPosition() {
+  //       return ;
+  //     }
+  //   },
 };
 </script>
 
