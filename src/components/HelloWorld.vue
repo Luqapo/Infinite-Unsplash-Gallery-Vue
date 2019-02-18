@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="hello" ref="app">
     <h2>Infinite Scroll Unsplash Code Challenge</h2>
     <div class="container">
       <ImagePack
@@ -16,7 +16,6 @@ import axios from "axios";
 import _ from "lodash";
 
 import ImagePack from "./ImagePack";
-import { setTimeout, setInterval } from "timers";
 
 const apiUrl = "https://api.unsplash.com";
 const count = 6;
@@ -45,31 +44,20 @@ export default {
       this.getImages();
     }, 500);
     window.addEventListener("scroll", _.debounce(this.scrol, 300));
-    this.winHeight();
   },
   methods: {
     scrol() {
+      this.windowInnerHeight = window.innerHeight;
+      this.documentHeight = window.document.documentElement.offsetHeight;
+      this.fullScroll = this.documentHeight - this.windowInnerHeight;
+      this.scrollY = window.scrollY;
       console.log(this.fullScroll - this.scrollY < 100);
       if (this.fullScroll - this.scrollY < 100) {
-        console.log("dodaje");
         this.getImages();
       }
     },
-    winHeight() {
-      setInterval(() => {
-        this.windowInnerHeight = window.innerHeight;
-        // console.log('wysokosc', this.windowInnerHeight);
-        this.documentHeight = window.document.documentElement.offsetHeight;
-        console.log("wysokosc dokumentu", this.documentHeight);
-        this.fullScroll = this.documentHeight - this.windowInnerHeight;
-        //console.log('fullscroll', this.fullScroll);
-        this.scrollY = window.scrollY;
-        //console.log('scrollY', this.scrollY);
-      }, 300);
-    },
     getImages() {
       if (!this.isOk) {
-        console.log("Laduje");
         this.isOk = true;
         setTimeout(() => {
           this.isOk = null;
@@ -77,7 +65,6 @@ export default {
       }
 
       axios.get(apiEndPoint).then(res => {
-        //console.log(res.data);
         const imagesPack = res.data.map(image => ({
           description: image.description,
           urls: image.urls
@@ -86,15 +73,9 @@ export default {
       });
     }
   }
-  // computed: {
-  //     scrollPosition() {
-  //       return ;
-  //     }
-  //   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 h2 {
   margin: 20px 0 0;
@@ -104,6 +85,5 @@ h2 {
   flex-wrap: wrap;
   max-width: 912px;
   margin: 10px auto;
-  height: 2000px;
 }
 </style>
