@@ -7,6 +7,7 @@
         :images="images"
         :key="i"
       />
+      <Spinner />
     </div>
   </div>
 </template>
@@ -16,6 +17,7 @@ import axios from "axios";
 import _ from "lodash";
 
 import ImagePack from "./ImagePack";
+import Spinner from "./Spinner";
 
 const apiUrl = "https://api.unsplash.com";
 const count = 6;
@@ -26,7 +28,8 @@ const apiEndPoint = `${apiUrl}/photos/random?client_id=${accessKey}&count=${coun
 export default {
   name: "HelloWorld",
   components: {
-    ImagePack
+    ImagePack,
+    Spinner
   },
   data() {
     return {
@@ -51,7 +54,7 @@ export default {
       this.documentHeight = window.document.documentElement.offsetHeight;
       this.fullScroll = this.documentHeight - this.windowInnerHeight;
       this.scrollY = window.scrollY;
-      console.log(this.fullScroll - this.scrollY < 100);
+
       if (this.fullScroll - this.scrollY < 100) {
         this.getImages();
       }
@@ -64,13 +67,16 @@ export default {
         }, 499);
       }
 
-      axios.get(apiEndPoint).then(res => {
-        const imagesPack = res.data.map(image => ({
-          description: image.description,
-          urls: image.urls
-        }));
-        this.dataToRender.push(imagesPack);
-      });
+      axios
+        .get(apiEndPoint)
+        .then(res => {
+          const imagesPack = res.data.map(image => ({
+            description: image.description,
+            urls: image.urls
+          }));
+          this.dataToRender.push(imagesPack);
+        })
+        .catch(err => console.log(err));
     }
   }
 };
