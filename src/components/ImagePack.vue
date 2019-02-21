@@ -8,11 +8,19 @@
 
 <script>
 export default {
-  name: "ImagePack",
+  name: 'ImagePack',
   props: {
     images: Array
+  },
+  methods: {
+    addFile() {
+      console.log('Im here!')
+    },
+    codingChallwnge() {
+      console.log('Buuu')
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
