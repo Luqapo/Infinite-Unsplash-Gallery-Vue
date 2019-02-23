@@ -1,6 +1,7 @@
 <template>
   <div class="hello" ref="app">
     <h2>Infinite Scroll Unsplash Code Challenge</h2>
+    <button @click="showServer">Show Server</button>
     <div class="container">
       <ImagePack
         v-for="(images, i) in dataToRender"
@@ -18,6 +19,7 @@ import _ from 'lodash';
 
 import ImagePack from './ImagePack';
 import Spinner from './Spinner';
+import { store } from '../services/Es6Store.js';
 
 const apiUrl = 'https://api.unsplash.com';
 const count = 6;
@@ -77,14 +79,14 @@ export default {
           this.dataToRender.push(imagesPack);
         })
         .catch(err => console.log(err));
+    },
+    showServer() {
+      console.log(store.get());
+      store.set({
+        url: 'http://hahahahmamyto.com',
+        key: 'Sajksudiohfkvnd,vndx'
+      });
     }
-    // showServer() {
-    //   console.log(ServerStore.get());
-    //   ServerStore.set({
-    //     url: 'http://hahahahmamyto.com',
-    //     key: 'OżeszWdupe'
-    //   })
-    // }
   }
 };
 </script>

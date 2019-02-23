@@ -10,7 +10,7 @@
 <script>
 import axios from 'axios';
 
-import ServerStore from '../services/ServerStore.js';
+import { store } from '../services/Es6Store.js';
 
 export default {
   name: 'server-store',
@@ -20,18 +20,20 @@ export default {
     };
   },
   created() {
-    ServerStore.set({
-      url: 'http://localhost:8080/events',
-      key: 'Saadfhskdfhwferihvsvscz'
-    });
+    // store.set({
+    //   url: 'http://localhost:8080/events',
+    //   key: 'Saadfhskdfhwferihvsvscz'
+    // });
+    console.log(store.get());
+    this.server = store.get();
   },
   methods: {
     getUrl() {
-      console.log(ServerStore.get());
-      this.server = ServerStore.get();
+      console.log(store.get());
+      this.server = store.get();
     },
     setNew() {
-      ServerStore.set({
+      store.set({
         url: 'http://awascloud.com/booster',
         key: 'Sajksudiohfkvnd,vndx'
       });
@@ -40,7 +42,9 @@ export default {
       axios
         .get(this.server.url, {
           headers: {
-            Authorization: `Bearer ${this.server.key}`
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Barear ${this.server.key}`
           }
         })
         .catch(err => alert(err));
