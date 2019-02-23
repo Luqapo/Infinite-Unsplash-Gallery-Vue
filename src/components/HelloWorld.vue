@@ -13,20 +13,20 @@
 </template>
 
 <script>
-import axios from "axios";
-import _ from "lodash";
+import axios from 'axios';
+import _ from 'lodash';
 
-import ImagePack from "./ImagePack";
-import Spinner from "./Spinner";
+import ImagePack from './ImagePack';
+import Spinner from './Spinner';
 
-const apiUrl = "https://api.unsplash.com";
+const apiUrl = 'https://api.unsplash.com';
 const count = 6;
 const accessKey =
-  "9a3bbae53c612d4f49421b74e3206dc26f80d04b2dc0bf7004bce0e3f1971543";
+  '9a3bbae53c612d4f49421b74e3206dc26f80d04b2dc0bf7004bce0e3f1971543';
 const apiEndPoint = `${apiUrl}/photos/random?client_id=${accessKey}&count=${count}`;
 
 export default {
-  name: "HelloWorld",
+  name: 'HelloWorld',
   components: {
     ImagePack,
     Spinner
@@ -39,14 +39,14 @@ export default {
     };
   },
   destroyed: function() {
-    window.removeEventListener("scroll", this.scrol);
+    window.removeEventListener('scroll', this.scrol);
   },
   mounted() {
     this.getImages();
     setTimeout(() => {
       this.getImages();
     }, 500);
-    window.addEventListener("scroll", _.debounce(this.scrol, 300));
+    window.addEventListener('scroll', _.debounce(this.scrol, 300));
   },
   methods: {
     scrol() {
@@ -78,6 +78,13 @@ export default {
         })
         .catch(err => console.log(err));
     }
+    // showServer() {
+    //   console.log(ServerStore.get());
+    //   ServerStore.set({
+    //     url: 'http://hahahahmamyto.com',
+    //     key: 'OżeszWdupe'
+    //   })
+    // }
   }
 };
 </script>
